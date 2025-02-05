@@ -46,6 +46,7 @@ Route::prefix('V1')->group(function (): void {
         Route::get('/dashboardstat', [DashBoardStatController::class, 'getStats']);
         Route::get('/userstat', [DashBoardStatController::class, 'getUserStat']);
         Route::get('/categoriesstat', [DashBoardStatController::class, 'getCategoriesStat']);
+        Route::get('/gamestat', [DashBoardStatController::class, 'getGameStat']);
 
         Route::put('/updaterole/{id}', [UserController::class, 'updateRole']);
         Route::post('/createuser', [UserController::class, 'createUser']);

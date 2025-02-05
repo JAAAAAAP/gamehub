@@ -7,6 +7,7 @@ use App\Models\Game;
 use Illuminate\Http\Request;
 use App\Models\UserActivityLog;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\GameResource;
 use App\Http\Resources\UserActivityLogResource;
 use App\Models\User;
 use Carbon\Carbon;
@@ -100,11 +101,19 @@ class DashBoardStatController extends Controller
     public function getGameStat()
     {
         try {
-            $totalCategories = Categories::count();
-            $Categoriesdata = Categories::all();
+            $game = Game::with(['categories:id,name', 'galleries', 'likes:id', 'reviews'])
+                ->withAvg('reviews', 'rating');
+            $totalGame = Game::count();
+            $gameInMonth = Game::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)
+                ->count();
+            $gameToday = Game::whereDate('created_at', Carbon::today()->toDateString())
+                ->count();
             return $this->Success(data: [
-                "totalCategories" => $totalCategories,
-                "Categoriesdata" => $Categoriesdata,
+                "totalGame" => $totalGame,
+                "gameInMonth" => $gameInMonth,
+                "gameToday" => $gameToday,
+                "game" => GameResource::collection($game),
             ]);
         } catch (\Exception $e) {
             return $this->Error(message: "เกิดข้อผิดพลาดบางอย่าง", error: $e->getMessage(), status: 500);
